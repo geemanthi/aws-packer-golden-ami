@@ -1,0 +1,82 @@
+name: Packer AMI Build
+
+on:
+  pull_request:
+    branches: [main, release*]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Validate Packer
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment: dev
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Packer
+        uses: hashicorp/setup-packer@v3
+
+      - name: Install Ansible
+        run: pipx install ansible-core
+
+      - name: Check Ansible playbook and roles
+        run: ansible-playbook -i localhost, --syntax-check ansible/harden.yml
+
+      - name: Initialize Packer plugins
+        run: packer init .
+
+      - name: Check Packer formatting
+        run: packer fmt -check -recursive .
+
+      - name: Validate Packer template
+        run: packer validate .
+
+  build:
+    name: Build Packer
+    needs: validate
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    environment: dev
+
+    permissions:
+      contents: read
+      id-token: write
+
+    concurrency:
+      group: base-aml3-x64-build
+      cancel-in-progress: false
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Packer
+        uses: hashicorp/setup-packer@v3
+
+      - name: Install Ansible
+        run: pipx install ansible-core
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v5
+        with:
+          role-to-assume: ${{ vars.AWS_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION }}
+
+      - name: Initialize Packer plugins
+        run: packer init .
+
+      - name: Build AMI
+        run: packer build -color=false .
+
+      - name: Upload AMI manifest
+        uses: actions/upload-artifact@v4
+        with:
+          name: packer-ami-manifest
+          path: manifest.json
+          if-no-files-found: error

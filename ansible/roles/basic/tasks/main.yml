@@ -1,0 +1,12 @@
+---
+- name: Apply available package updates
+  ansible.builtin.dnf:
+    name: "*"
+    state: latest
+    update_only: true
+    update_cache: true
+
+- name: Install base utilities
+  ansible.builtin.dnf:
+    name: "{{ base_ami_packages }}"
+    state: present

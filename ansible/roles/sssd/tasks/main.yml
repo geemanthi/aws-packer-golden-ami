@@ -1,0 +1,21 @@
+---
+- name: Install SSSD and its administration tools
+  ansible.builtin.dnf:
+    name:
+      - sssd
+      - sssd-tools
+    state: present
+
+- name: Restrict access to the SSSD configuration directory
+  ansible.builtin.file:
+    path: /etc/sssd
+    state: directory
+    owner: root
+    group: root
+    mode: "0700"
+
+- name: Keep SSSD stopped until an identity provider is configured
+  ansible.builtin.systemd_service:
+    name: sssd.service
+    enabled: false
+    state: stopped
