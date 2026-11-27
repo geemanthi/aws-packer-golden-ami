@@ -5,5 +5,5 @@
   gather_facts: true
 
   roles:
-    - base_ami
+    - basic
     - sssd
