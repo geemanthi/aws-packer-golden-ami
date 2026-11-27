@@ -12,7 +12,7 @@ packer {
 }
 
 source "amazon-ebs" "base-ami" {
-  region        = var.aws_region
+  region = var.aws_region
   source_ami_filter {
     filters = {
       name                = "al2023-ami-2023.*-x86_64"
@@ -24,9 +24,9 @@ source "amazon-ebs" "base-ami" {
   }
   instance_type = "t3.micro"
 
-  subnet_id                   = var.build_subnet_id
+  subnet_id                                 = var.build_subnet_id
   temporary_security_group_source_public_ip = true
-  associate_public_ip_address = true
+  associate_public_ip_address               = true
 
   ssh_username  = "ec2-user"
   ssh_interface = "public_ip"
@@ -34,12 +34,12 @@ source "amazon-ebs" "base-ami" {
 
   ami_name        = "base-aml3-x64-{{timestamp}}"
   ami_description = "Amazon Linux 2023 x86_64 base image with standard utilities"
-  
+
   imds_support = "v2.0"
 
   run_tags = {
-    Name      = "base-aml3-x64"
-    Project   = "golden-ami"
-    BuiltBy   = "packer"
+    Name    = "base-aml3-x64"
+    Project = "golden-ami"
+    BuiltBy = "packer"
   }
 }

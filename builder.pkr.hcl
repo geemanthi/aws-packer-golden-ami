@@ -1,5 +1,5 @@
 build {
-  name = "ami-packer"
+  name    = "ami-packer"
   sources = ["source.amazon-ebs.base-ami"]
 
   provisioner "ansible" {
