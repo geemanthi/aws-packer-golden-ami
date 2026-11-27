@@ -41,6 +41,7 @@ jobs:
 
   build:
     name: Build Packer
+    if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main'
     needs: validate
     runs-on: ubuntu-latest
     timeout-minutes: 120
