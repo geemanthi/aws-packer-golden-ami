@@ -37,7 +37,7 @@ jobs:
         run: packer fmt -check -recursive .
 
       - name: Validate Packer template
-        run: packer validate .
+        run: packer validate -var-file=dev.pkvars.hcl .
 
   build:
     name: Build Packer
@@ -74,7 +74,7 @@ jobs:
         run: packer init .
 
       - name: Build AMI
-        run: packer build -color=false .
+        run: packer build -var-file=dev.pkvars.hcl -color=false .
 
       - name: Upload AMI manifest
         uses: actions/upload-artifact@v4
