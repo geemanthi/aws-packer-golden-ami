@@ -3,8 +3,8 @@ build {
   sources = ["source.amazon-ebs.base-ami"]
 
   provisioner "ansible" {
-    playbook_file   = "ansible/harden.yml"
-    user            = "ec2-user"
+    playbook_file = "ansible/harden.yml"
+    user          = "ec2-user"
   }
 
   post-processor "manifest" {
