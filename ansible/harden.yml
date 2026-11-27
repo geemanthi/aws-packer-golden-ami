@@ -1,0 +1,9 @@
+---
+- name: Prepare the Amazon Linux 2023 x86_64 base AMI
+  hosts: all
+  become: true
+  gather_facts: true
+
+  roles:
+    - basic
+    - sssd
